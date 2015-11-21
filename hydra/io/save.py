@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import struct
-
-from .hdr_pixel import HDRPixel
+import hydra.core
 
 def strwrite(fp, str):
     fp.write(bytearray(str, 'ascii'))
@@ -29,7 +28,7 @@ def hdr_save(filename, hdr):
                 r = hdr[i, j, 0]
                 g = hdr[i, j, 1]
                 b = hdr[i, j, 2]
-                line[j] = HDRPixel(r, g, b)
+                line[j] = hydra.core.Pixel(r, g, b)
 
             fp.write(struct.pack('BBBB', 0x02, 0x02, (width >> 8) & 0xff, width & 0xff))
 

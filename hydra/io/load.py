@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+"""
+Load .hdr format.
+"""
 
 import re
 import math
