@@ -14,12 +14,15 @@ class Pixel(object):
         m, ie = math.frexp(d)
         d = m * 256.0 / d
 
-        self.r = int(clamp(r * d, 0, 255))
-        self.g = int(clamp(g * d, 0, 255))
-        self.b = int(clamp(b * d, 0, 255))
-        self.e = int(clamp(ie + 128, 0, 255))
+        self.r = int(clamp(r * d, (0, 255)))
+        self.g = int(clamp(g * d, (0, 255)))
+        self.b = int(clamp(b * d, (0, 255)))
+        self.e = int(clamp(ie + 128, (0, 255)))
 
     def get(self, i):
+        return self.__getitem__(i)
+
+    def __getitem__(self, i):
         if i == 0: return self.r
         if i == 1: return self.g
         if i == 2: return self.b
