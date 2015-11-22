@@ -94,13 +94,9 @@ def hdr_load(filename):
 
             nowy += 1
 
-        img = np.zeros((height, width, 3))
-        for y, x in product(range(height), range(width)):
-            e = tmp_data[(y * width + x) * 4 + 3]
-            r = tmp_data[(y * width + x) * 4 + 0] * math.pow(2.0, e - 128.0) / 256.0
-            g = tmp_data[(y * width + x) * 4 + 1] * math.pow(2.0, e - 128.0) / 256.0
-            b = tmp_data[(y * width + x) * 4 + 2] * math.pow(2.0, e - 128.0) / 256.0
-            img[y, x, :] = (r, g, b)
+        tmp = np.array(tmp_data).reshape((height, width, 4))
+        expo = np.power(2.0, tmp[:,:,3] - 128.0) / 256.0
+        img = np.multiply(tmp[:,:,0:3], expo[:,:,np.newaxis])
 
     if img is None:
         raise Exception('Invalid HDR format')

@@ -5,7 +5,7 @@ from itertools import product
 
 import numpy as np
 
-def tonemap(img, a=0.18):
+def reinhard02(img, a=0.18):
     delta = 1.0e-8
 
     height, width, dims = img.shape
