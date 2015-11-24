@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-
 import math
 from itertools import product
 
 import numpy as np
+import hydra.core
 
 def reinhard02(img, a=0.18):
     delta = 1.0e-8
@@ -13,7 +12,7 @@ def reinhard02(img, a=0.18):
     lw_bar  = 0.0
     l_white = 0.0
 
-    l = 0.2126 * img[:,:,0] + 0.7152 * img[:,:,1] + 0.0722 * img[:,:,2]
+    l = hydra.core.lum(img)
     lw_bar = np.sum(np.log(l + delta))
     l_white = np.max(l)
 

@@ -1,2 +1,2 @@
-from .load import hdr_load as load
+from .load import load
 from .save import hdr_save as save

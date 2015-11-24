@@ -9,3 +9,13 @@ def clamp(x, range=(0.0, 1.0)):
     if range[0] > range[1]:
         raise Exception('Lower bound is larger than upper bound!!')
     return max(range[0], min(x, range[1]))
+
+def lum(img):
+    l = 0.2126 * img[:,:,0] + \
+        0.7152 * img[:,:,1] + \
+        0.0722 * img[:,:,2]
+    return l
+
+def remove_specials(img):
+    img[np.isinf(img)] = 0.0
+    img[np.isnan(img)] = 0.0
