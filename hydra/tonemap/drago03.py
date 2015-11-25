@@ -6,19 +6,20 @@ import hydra.core
 
 def drago03(img, Ld_max = 100.0, p = 0.95):
     L = hydra.core.lum(img)
-    Lw_max = np.max(L)
-    denom1 = math.log10(1.0 + Lw_max)
+    Lwa = hydra.core.log_mean(L)
+    Lwa = Lwa / ((1.0 + p - 0.85) ** 5.0)
+    LMax = np.max(L)
 
-    a = L / Lw_max
-    b = math.log(p) / math.log(0.5)
-    denom2 = np.log(2.0 + 8.0 * np.power(a, b))
+    L_wa = L / Lwa
+    LMax_wa = LMax / Lwa
 
-    numer1 = Ld_max / 100.0
-    numer2 = np.log(1.0 + L)
+    c1 = math.log(p) / math.log(0.5)
+    c2 = (Ld_max / 100.0) / math.log10(1.0 + LMax_wa)
+    Ld = c2 * np.log(1.0 + L_wa) / np.log(2.0 + 8.0 * ((L_wa / LMax_wa) ** c1))
+
     ret = np.zeros(img.shape)
-    Ld = (numer1 * numer2) / (denom1 * denom2)
     for c in range(3):
-        ret[:,:,c] = img[:,:,c] * Ld / L
+        ret[:,:,c] = hydra.core.remove_specials(img[:,:,c] * Ld / L)
 
     ret = np.maximum(ret, 0.0)
     ret = np.minimum(ret, 1.0)
