@@ -4,11 +4,17 @@ IO for .hdr format
 
 import re
 import math
+import struct
 import numpy as np
 from itertools import product
 
+import hydra.core
+
 HDR_NONE = 0x00
 HDR_RLE_RGBE_32 = 0x01
+
+def strwrite(fp, str):
+    fp.write(bytearray(str, 'ascii'))
 
 class HDRFormat(object):
     @staticmethod
@@ -111,37 +117,35 @@ class HDRFormat(object):
 
         return img
 
-    def strwrite(fp, str):
-        fp.write(bytearray(str, 'ascii'))
-
-    def save(filename):
+    @staticmethod
+    def save(filename, img):
         """
         Save .hdr format
         """
         with open(filename, 'wb') as f:
             # Write header
             ret = 0x0a
-            strwrite(fp, '#?RADIANCE%c' % ret)
-            strwrite(fp, '# Made with100%% pure HDR Shop%c' % ret)
-            strwrite(fp, 'FORMAT=32-bit_rle_rgbe%c' % ret)
-            strwrite(fp, 'EXPOSURE=1.0000000000000%c%c' % (ret, ret))
+            strwrite(f, '#?RADIANCE%c' % ret)
+            strwrite(f, '# Made with100%% pure HDR Shop%c' % ret)
+            strwrite(f, 'FORMAT=32-bit_rle_rgbe%c' % ret)
+            strwrite(f, 'EXPOSURE=1.0000000000000%c%c' % (ret, ret))
 
             # Write size
-            [height, width, dim] = hdr.shape
+            [height, width, dim] = img.shape
             if dim != 3:
                 raise Exception('HDR image must have 3 channels')
 
-            strwrite(fp, '-Y %d +X %d%c' % (height, width, ret))
+            strwrite(f, '-Y %d +X %d%c' % (height, width, ret))
 
             for i in range(height):
                 line = [None] * width
                 for j in range(width):
-                    r = hdr[i, j, 0]
-                    g = hdr[i, j, 1]
-                    b = hdr[i, j, 2]
+                    r = img[i, j, 0]
+                    g = img[i, j, 1]
+                    b = img[i, j, 2]
                     line[j] = hydra.core.Pixel(r, g, b)
 
-                fp.write(struct.pack('BBBB', 0x02, 0x02, (width >> 8) & 0xff, width & 0xff))
+                f.write(struct.pack('BBBB', 0x02, 0x02, (width >> 8) & 0xff, width & 0xff))
 
                 buf = []
                 for ch in range(4):
@@ -153,4 +157,4 @@ class HDRFormat(object):
                             buf.append(line[j].get(ch))
                         cursor += cursor_move
 
-                fp.write(struct.pack('B' * len(buf), *buf))
+                f.write(struct.pack('B' * len(buf), *buf))
