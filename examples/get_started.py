@@ -20,9 +20,8 @@ def main():
     img = hydra.io.load(filename)
 
     # Tone mapping
-    # logs = hydra.tonemap.logarithmic(img)
-    logs = hydra.tonemap.tumblin93(img)
-    logs = hydra.tonemap.gamma(logs, 1.0 / 2.2)
+    TR93 = hydra.tonemap.tumblin93(img)
+    TR93 = hydra.tonemap.gamma(TR93, 1.0 / 2.2)
     RH02 = hydra.tonemap.reinhard02(img, alph=0.18)
     RH02 = hydra.tonemap.gamma(RH02, 1.0 / 2.2)
     DM03 = hydra.tonemap.drago03(img, Ld_max=100, p=0.85)
@@ -35,8 +34,8 @@ def main():
     # Show original HDR
     plt.subplot(1, 5, 1)
     plt.axis('off')
-    plt.title('Original')
-    plt.imshow(logs, interpolation='nearest')
+    plt.title('Tumblin 93')
+    plt.imshow(TR93, interpolation='nearest')
 
     # Show Reinhard 02
     plt.subplot(1, 5, 2)

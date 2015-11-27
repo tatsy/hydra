@@ -6,6 +6,8 @@ EPS = 1.0e-32
 INF = 1.0e20
 
 import numpy as np
+from PIL import Image
+from PIL.ExifTag import TAGS
 
 def clamp(x, range=(0.0, 1.0)):
     if range[0] > range[1]:
@@ -17,6 +19,26 @@ def lum(img):
         0.7152 * img[:,:,1] + \
         0.0722 * img[:,:,2]
     return l
+
+def getexptime(filename):
+    im = Image.open(filename)
+    try:
+        exif = im._getexif()
+    except AttributeError:
+        return 1.0
+
+    exif_table = {}
+    for tag_id, value in exif.items():
+        tag = TAGS.get(tag_id, tag_id)
+        exif_table[tag] = value
+
+    expo_str = 'ExposureTime'
+    expo_time = 1.0
+    if expo_str in exif_table:
+        expo_tubple = exif_table[expo_str]
+        expo_time = expo_tuple[0] / expo_tuble[1]
+
+    return expo_time
 
 def log_mean(img):
     delta = 1.0e-6

@@ -6,8 +6,6 @@ import scipy as sp
 import scipy.sparse
 import scipy.sparse.linalg
 
-import matplotlib.pyplot as plt
-
 from .reinhard02 import *
 
 def minimization(L, g, W, LM_alpha=1.0, LM_lambda=0.4):

@@ -80,7 +80,7 @@ def stack_low_res(stack):
 
     return stack_out
 
-def hdr_build(stack, exposure_stack, weight_type='all', lin_type='gamma2.2'):
+def devebec97(stack, exposure_stack, weight_type='all', lin_type='gamma2.2'):
     n_img = len(stack)
     lin_fun = []
 
