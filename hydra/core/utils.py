@@ -7,7 +7,7 @@ INF = 1.0e20
 
 import numpy as np
 from PIL import Image
-from PIL.ExifTag import TAGS
+from PIL.ExifTags import TAGS
 
 def clamp(x, range=(0.0, 1.0)):
     if range[0] > range[1]:
