@@ -7,8 +7,6 @@ import scipy.ndimage
 import scipy.sparse
 import scipy.sparse.linalg
 
-import matplotlib.pyplot as plt
-
 import hydra.core
 
 EPS = 1.0e-6
