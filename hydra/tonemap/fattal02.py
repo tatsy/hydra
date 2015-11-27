@@ -11,11 +11,6 @@ import hydra.core
 
 EPS = 1.0e-6
 
-def max_quart(mat, percentile):
-    n, m = mat.shape
-    M = np.sort(mat.reshape(n * m))
-    return M[min(round(n * m * percentile), n * m - 1)]
-
 def imresize(img, size):
     if isinstance(size, float):
         size = (int(img.shape[0] * size), int(img.shape[1] * size))
@@ -163,7 +158,7 @@ def fattal02(img, beta=0.90, normalize=True):
 
     Ld = np.exp(poisson_solver(divG))
     if normalize:
-        Ld = Ld / max_quart(Ld, 0.99995)
+        Ld = Ld / hydra.core.max_quart(Ld, 0.99995)
         Ld = np.maximum(Ld, 0.0)
         Ld = np.minimum(Ld, 1.0)
 

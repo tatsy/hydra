@@ -23,6 +23,15 @@ def log_mean(img):
     img_delta = np.log(img + delta)
     return np.exp(np.average(img_delta))
 
+def max_quart(mat, percentile):
+    M = mat.copy()
+    if mat.ndim == 2:
+        n, m = M.shape
+        M = M.reshape(n * m)
+
+    M = np.sort(M)
+    return M[min(round(M.size * percentile), M.size - 1)]
+
 def remove_specials(img):
     img[np.isinf(img)] = 0.0
     img[np.isnan(img)] = 0.0

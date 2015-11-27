@@ -4,23 +4,31 @@ from itertools import product
 import numpy as np
 import hydra.core
 
-def reinhard02(img, a=0.18):
-    delta = 1.0e-8
+def calc_white_point(L):
+    Lmax = hydra.core.max_quart(L, 0.99)
+    Lmin = hydra.core.max_quart(L, 0.01)
 
-    height, width, dims = img.shape
+    log2Max = np.log2(Lmax + 1.0e-9)
+    log2Min = np.log2(Lmin + 1.0e-9)
 
-    lw_bar  = 0.0
-    l_white = 0.0
+    return 1.5 * (2 ** (log2Max - log2Min - 5.0))
 
-    l = hydra.core.lum(img)
-    lw_bar = np.sum(np.log(l + delta))
-    l_white = np.max(l)
+def reinhard02(img, alph=0.18):
+    L = hydra.core.lum(img)
+    Lwa = hydra.core.log_mean(L)
 
-    lw_bar = math.exp(lw_bar / (width * height))
-    l_white2 = l_white * l_white
+    Lscaled = (alph * L) / Lwa
 
-    ret = img * (a / lw_bar)
-    ret = np.multiply(ret, np.divide(1.0 + ret / l_white2, 1.0 + ret))
+    Lwhite = calc_white_point(L)
+    Lwhite2 = Lwhite * Lwhite
 
-    ret = np.minimum(1.0, ret)
+    Ld = (Lscaled * (1.0 + Lscaled / Lwhite2) / (1.0 + Lscaled))
+
+    ret = np.zeros(img.shape)
+    for c in range(3):
+        ret[:,:,c] = hydra.core.remove_specials(img[:,:,c] / L * Ld)
+
+    ret = np.maximum(ret, 0.0)
+    ret = np.minimum(ret, 1.0)
+
     return ret
