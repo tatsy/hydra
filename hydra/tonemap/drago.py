@@ -1,10 +1,15 @@
+"""
+Implementation of the paper,
+Drago et al. 2003
+"""
+
 import math
 import numpy as np
 from itertools import product
 
 import hydra.core
 
-def drago03(img, Ld_max = 100.0, p = 0.95):
+def drago(img, Ld_max = 100.0, p = 0.95):
     L = hydra.core.lum(img)
     Lwa = hydra.core.log_mean(L)
     Lwa = Lwa / ((1.0 + p - 0.85) ** 5.0)

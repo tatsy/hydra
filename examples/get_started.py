@@ -15,51 +15,59 @@ except:
 
 filename = '../data/memorial.hdr'
 
+def on_key_press(event):
+    plt.close('all')
+
 def main():
     # Load HDR
     img = hydra.io.load(filename)
 
     # Tone mapping
-    TR93 = hydra.tonemap.tumblin93(img)
+    TR93 = hydra.tonemap.tumblin(img)
     TR93 = hydra.tonemap.gamma(TR93, 1.0 / 2.2)
-    RH02 = hydra.tonemap.reinhard02(img, alph=0.18)
+    RH02 = hydra.tonemap.reinhard(img)
     RH02 = hydra.tonemap.gamma(RH02, 1.0 / 2.2)
-    DM03 = hydra.tonemap.drago03(img, Ld_max=100, p=0.85)
+    DM03 = hydra.tonemap.drago(img)
     DM03 = hydra.tonemap.gamma(DM03, 1.0 / 2.2)
-    FD02 = hydra.tonemap.fattal02(img)
+    FD02 = hydra.tonemap.fattal(img)
     FD02 = hydra.tonemap.gamma(FD02, 1.0 / 2.2)
-    LF06 = hydra.tonemap.lischinski06(img)
+    LF06 = hydra.tonemap.lischinski(img)
     LF06 = hydra.tonemap.gamma(LF06, 1.0 / 2.2)
 
     # Show original HDR
-    plt.subplot(1, 5, 1)
-    plt.axis('off')
-    plt.title('Tumblin 93')
-    plt.imshow(TR93, interpolation='nearest')
+    fig, ax = plt.subplots()
+    ax.axis('off')
+    ax.set_title('Tumblin 93')
+    ax.imshow(TR93, interpolation='nearest')
+    fig.canvas.mpl_connect('key_press_event', on_key_press)
 
     # Show Reinhard 02
-    plt.subplot(1, 5, 2)
-    plt.axis('off')
-    plt.title('Reinhard 02')
-    plt.imshow(RH02, interpolation='nearest')
+    fig, ax = plt.subplots()
+    ax.axis('off')
+    ax.set_title('Reinhard 02')
+    ax.imshow(RH02, interpolation='nearest')
+    fig.canvas.mpl_connect('key_press_event', on_key_press)
 
     # Show Drago 03
-    plt.subplot(1, 5, 3)
-    plt.axis('off')
-    plt.title('Drago 03')
-    plt.imshow(DM03, interpolation='nearest')
+    fig, ax = plt.subplots()
+    ax.axis('off')
+    ax.set_title('Drago 03')
+    ax.imshow(DM03, interpolation='nearest')
+    fig.canvas.mpl_connect('key_press_event', on_key_press)
 
     # Show Fattal 02
-    plt.subplot(1, 5, 4)
-    plt.axis('off')
-    plt.title('Fattal 02')
-    plt.imshow(FD02, interpolation='nearest')
+    fig, ax = plt.subplots()
+    ax.axis('off')
+    ax.set_title('Fattal 02')
+    ax.imshow(FD02, interpolation='nearest')
+    fig.canvas.mpl_connect('key_press_event', on_key_press)
 
     # Show Lischinski 06
-    plt.subplot(1, 5, 5)
-    plt.axis('off')
-    plt.title('Lischinski 06')
-    plt.imshow(LF06, interpolation='nearest')
+    fig, ax = plt.subplots()
+    ax.axis('off')
+    ax.set_title('Lischinski 06')
+    ax.imshow(LF06, interpolation='nearest')
+    fig.canvas.mpl_connect('key_press_event', on_key_press)
 
     plt.show()
 

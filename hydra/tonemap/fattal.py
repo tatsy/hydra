@@ -86,7 +86,8 @@ def calcedge(img):
 def attenuatemap(img, alph, beta, l, levels):
     edge = calcedge(img) / (2.0 ** l)
     tmp = edge / alph
-    phi = np.power(edge / alph, beta - 1.0)
+    phi = np.zeros(tmp.shape)
+    phi[tmp != 0.0] = np.power(edge[tmp != 0.0] / alph, beta - 1.0)
     indx = np.isinf(phi)
     phi = hydra.core.remove_specials(phi)
     phi[indx] = np.average(phi)
@@ -138,7 +139,7 @@ def poisson_solver(f):
 
     return x
 
-def fattal02(img, beta=0.90, normalize=True):
+def fattal(img, beta=0.90, normalize=True):
     Lori = hydra.core.lum(img)
     L = np.log(Lori + 1.0e-6)
 

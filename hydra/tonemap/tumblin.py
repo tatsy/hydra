@@ -8,7 +8,7 @@ def calc_gamma(x):
     y[x > 100.0] = 2.655
     return y
 
-def tumblin93(img, Lda=20.0, Ldmax=100.0, Cmax=100.0):
+def tumblin(img, Lda=20.0, Ldmax=100.0, Cmax=100.0):
     L = hydra.core.lum(img)
     tmp = np.log(L + 2.3 * 1.0e-5)
     Lwa = math.exp(np.average(tmp))

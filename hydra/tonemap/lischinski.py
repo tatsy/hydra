@@ -6,7 +6,7 @@ import scipy as sp
 import scipy.sparse
 import scipy.sparse.linalg
 
-from .reinhard02 import *
+from .reinhard import *
 
 def minimization(L, g, W, LM_alpha=1.0, LM_lambda=0.4):
     e = 1.0e-4
@@ -41,7 +41,7 @@ def minimization(L, g, W, LM_alpha=1.0, LM_lambda=0.4):
     res = sp.sparse.linalg.spsolve(A, b)
     return res.reshape((r, c))
 
-def lischinski06(img, alph=0.18):
+def lischinski(img, alph=0.18):
     L = hydra.core.lum(img)
     Lwhite = calc_white_point(L)
     Lwhite2 = Lwhite * Lwhite

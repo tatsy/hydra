@@ -13,7 +13,7 @@ def calc_white_point(L):
 
     return 1.5 * (2 ** (log2Max - log2Min - 5.0))
 
-def reinhard02(img, alph=0.18):
+def reinhard(img, alph=0.18):
     L = hydra.core.lum(img)
     Lwa = hydra.core.log_mean(L)
 
