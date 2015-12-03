@@ -1,1 +1,1 @@
-from .devebec97 import devebec97
+from .devebec import devebec

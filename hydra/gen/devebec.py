@@ -80,17 +80,24 @@ def stack_low_res(stack):
 
     return stack_out
 
-def devebec97(stack, exposure_stack, weight_type='all', lin_type='gamma2.2'):
-    n_img = len(stack)
-    lin_fun = []
+def devebec(images, expotimes, weight_type='all', lin_type='gamma2.2'):
+    n_img = len(expotimes)
+    if n_img == 0:
+        raise Exception('Input images and exposure times are invalid')
 
+    h, w, col = images[0].shape
+    stack = np.zeros((h, w, col, n_img))
+    for i in range(n_img):
+        stack[:,:,:,i] = images[i]
+
+    lin_fun = []
     print('lin_type: %s' % lin_type)
     if lin_type == 'tabledDeb97':
         weight = weight_function(np.array([x / 255.0 for x in range(256)]), weight_type)
         stack2 = stack_low_res(stack)
         lin_fun = np.zeros((256, 3))
         for i in range(3):
-            g = gsolve(stack2[:,:,i], exposure_stack, 10.0, weight)
+            g = gsolve(stack2[:,:,i], expotimes, 10.0, weight)
             lin_fun[:,i] = g / g.max()
 
-    return combine_ldr(stack, np.exp(exposure_stack) + 1.0, lin_type, lin_fun, weight_type)
+    return combine_ldr(stack, np.exp(expotimes) + 1.0, lin_type, lin_fun, weight_type)

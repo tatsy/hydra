@@ -17,3 +17,16 @@ Python HDR image processing library.
 :Authors: Tatsuya Yatagawa (tatsy)
 :Web site: https://github.com/tatsy/hydra.git
 :License: MIT License
+
+
+Reference
+===============
+
+HDR and LDR sequence of memorial church is provided by Paul Devebec.
+
+http://www.pauldebevec.com/Research/HDR/
+
+
+Lamp image used for bilateral filter testing is provided by Eduardo S. L. Gastal and Manuel M. Oliveira.
+
+http://inf.ufrgs.br/~eslgastal/DomainTransform/
