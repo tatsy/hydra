@@ -26,17 +26,24 @@ def rec_filter_horizontal(I, D, sigma):
 
     return F
 
-def bilateral(I, sigma_s, sigma_r, num_iterations=5):
+def bilateral(I, sigma_s, sigma_r, num_iterations=5, J=None):
     if I.ndim == 3:
         img = I.copy()
     else:
         h, w = I.shape
         img = I.reshape((h, w, 1))
 
-    h, w, num_channels = img.shape
+    if J is None:
+        J = img
 
-    dIcdx = np.diff(img, n=1, axis=1)
-    dIcdy = np.diff(img, n=1, axis=0)
+    if J.ndim == 2:
+        h, w = J.shape
+        J = np.reshape(J, (h, w, 1))
+
+    h, w, num_channels = J.shape
+
+    dIcdx = np.diff(J, n=1, axis=1)
+    dIcdy = np.diff(J, n=1, axis=0)
 
     dIdx = np.zeros((h, w))
     dIdy = np.zeros((h, w))

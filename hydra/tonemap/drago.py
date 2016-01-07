@@ -1,7 +1,7 @@
-"""
+'''
 Implementation of the paper,
 Drago et al. 2003
-"""
+'''
 
 import math
 import numpy as np
