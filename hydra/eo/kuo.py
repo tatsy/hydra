@@ -11,8 +11,6 @@ import scipy.ndimage
 import hydra.core
 import hydra.filter
 
-import matplotlib.pyplot as plt
-
 def kuo_expand_map(L, gamma_removal=-1.0):
     kernel_size = math.ceil(0.1 * max(L.shape))
     Lflt = sp.ndimage.uniform_filter(L, kernel_size)
