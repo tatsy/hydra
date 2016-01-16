@@ -51,6 +51,6 @@ def kuo(img, Lmax, gamma_removal=-1.0):
 
     ret = np.zeros(img.shape)
     for c in range(3):
-        ret[:,:,c] = hydra.core.remove_specials(img[:,:,c]) * Lexp / Ld
+        ret[:,:,c] = hydra.core.remove_specials(img[:,:,c] * Lexp / Ld)
 
     return ret
