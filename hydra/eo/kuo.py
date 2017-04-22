@@ -9,7 +9,7 @@ import scipy as sp
 import scipy.ndimage
 
 import hydra.core
-import hydra.filter
+import hydra.filters
 
 def kuo_expand_map(L, gamma_removal=-1.0):
     kernel_size = math.ceil(0.1 * max(L.shape))

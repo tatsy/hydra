@@ -32,7 +32,7 @@ class HDRFormat(object):
             # Read header section
             while True:
                 buf = f.readline(bufsize).decode()
-                if buf[0] == '#' and buf == '#?RADIANCE\n':
+                if buf[0] == '#' and (buf == '#?RADIANCE\n' or buf == '#?RGBE\n'):
                     valid = True
                 else:
                     p = re.compile('FORMAT=(.*)')

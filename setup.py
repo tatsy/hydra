@@ -25,7 +25,7 @@ setup(
         'hydra.core',
         'hydra.gen',
         'hydra.io',
-        'hydra.filter',
+        'hydra.filters',
         'hydra.tonemap'
     ]
 )

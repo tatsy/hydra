@@ -7,7 +7,7 @@ Durand and Dorsey SIGGGRAPH 2002,
 
 import numpy as np
 import hydra.io
-import hydra.filter
+import hydra.filters
 
 def bilateral_separation(img, sigma_s=0.02, sigma_r=0.4):
     r, c = img.shape
