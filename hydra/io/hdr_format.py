@@ -31,7 +31,7 @@ class HDRFormat(object):
 
             # Read header section
             while True:
-                buf = f.readline(bufsize).decode()
+                buf = f.readline(bufsize).decode('ascii')
                 if buf[0] == '#' and (buf == '#?RADIANCE\n' or buf == '#?RGBE\n'):
                     valid = True
                 else:
@@ -66,49 +66,64 @@ class HDRFormat(object):
             else:
                 raise Exception('HDR image size is invalid!!')
 
-            tmpdata = np.zeros((width * height * 4))
-            nowy = 0
-            while True:
-                now = -1
-                now2 = -1
-                try:
-                    now = ord(f.read(1))
-                    now2 = ord(f.read(1))
-                except:
-                    break
+            # Check byte array is truly RLE or not
+            byte_start = f.tell()
+            now = ord(f.read(1))
+            now2 = ord(f.read(1))
+            if now != 0x02 or now2 != 0x02:
+                filetype = HDR_NONE
+            f.seek(byte_start)
 
-                if now != 0x02 or now2 != 0x02:
-                    break
-
-                A = ord(f.read(1))
-                B = ord(f.read(1))
-                width = (A << 8) | B
-
-                nowx = 0
-                nowv = 0
+            if filetype == HDR_RLE_RGBE_32:
+                tmpdata = np.zeros((width * height * 4), dtype=np.uint8)
+                nowy = 0
                 while True:
-                    if nowx >= width:
-                        nowv += 1
-                        nowx = 0
-                        if nowv == 4:
-                            break
+                    now = -1
+                    now2 = -1
+                    try:
+                        now = ord(f.read(1))
+                        now2 = ord(f.read(1))
+                    except:
+                        print('Hoge!!')
+                        break
 
-                    info = ord(f.read(1))
-                    if info <= 128:
-                        data = f.read(info)
-                        for i in range(info):
-                            tmpdata[(nowy * width + nowx) * 4 + nowv] = data[i]
-                            nowx += 1
-                    else:
-                        num = info - 128
-                        data = ord(f.read(1))
-                        for i in range(num):
-                            tmpdata[(nowy * width + nowx) * 4 + nowv] = data
-                            nowx += 1
+                    if now != 0x02 or now2 != 0x02:
+                        break
 
-                nowy += 1
+                    A = ord(f.read(1))
+                    B = ord(f.read(1))
+                    width = (A << 8) | B
 
-            tmpdata = tmpdata.reshape((height, width, 4))
+                    nowx = 0
+                    nowv = 0
+                    while True:
+                        if nowx >= width:
+                            nowv += 1
+                            nowx = 0
+                            if nowv == 4:
+                                break
+
+                        info = ord(f.read(1))
+                        if info <= 128:
+                            data = f.read(info)
+                            for i in range(info):
+                                tmpdata[(nowy * width + nowx) * 4 + nowv] = data[i]
+                                nowx += 1
+                        else:
+                            num = info - 128
+                            data = ord(f.read(1))
+                            for i in range(num):
+                                tmpdata[(nowy * width + nowx) * 4 + nowv] = data
+                                nowx += 1
+
+                    nowy += 1
+
+                tmpdata = tmpdata.reshape((height, width, 4))
+            else:
+                totsize = width * height * 4
+                tmpdata = struct.unpack('B' * totsize, f.read(totsize))
+                tmpdata = np.asarray(tmpdata, np.uint8).reshape((height, width, 4))
+
             expo = np.power(2.0, tmpdata[:,:,3] - 128.0) / 256.0
             img = np.multiply(tmpdata[:,:,0:3], expo[:,:,np.newaxis])
 
