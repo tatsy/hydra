@@ -2,16 +2,23 @@
 Example 2. Load and save
 """
 
-import hydra.io
+import os
+import time
+import hydra as hdr
 
-filename = '../data/memorial.hdr'
+rootdir = os.path.join(os.path.dirname(__file__), os.path.pardir)
+filename = os.path.join(rootdir, 'data', 'memorial.hdr')
 
 def main():
     # Load HDR
-    img = hydra.io.load(filename)
+    start = time.time()
+    img = hdr.io.load(filename)
+    print('Load time: {:.6f} sec'.format(time.time() - start))
 
     # Save HDR
-    hydra.io.save('image.hdr', img)
+    start = time.time()
+    hdr.io.save('image.hdr', img)
+    print('Save time: {:.6f} sec'.format(time.time() - start))
 
 if __name__ == '__main__':
     main()

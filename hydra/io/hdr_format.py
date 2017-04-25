@@ -126,7 +126,7 @@ class HDRFormat(object):
             # Write header
             ret = 0x0a
             strwrite(f, '#?RADIANCE%c' % ret)
-            strwrite(f, '# Made with100%% pure HDR Shop%c' % ret)
+            strwrite(f, '# Made with hydra, the python HDR library%c' % ret)
             strwrite(f, 'FORMAT=32-bit_rle_rgbe%c' % ret)
             strwrite(f, 'EXPOSURE=1.0000000000000%c%c' % (ret, ret))
 
@@ -137,15 +137,19 @@ class HDRFormat(object):
 
             strwrite(f, '-Y %d +X %d%c' % (height, width, ret))
 
+            line = np.zeros((width, 4))
             for i in range(height):
-                line = [None] * width
-                for j in range(width):
-                    r = img[i, j, 0]
-                    g = img[i, j, 1]
-                    b = img[i, j, 2]
-                    line[j] = hydra.core.Pixel(r, g, b)
-
                 f.write(struct.pack('BBBB', 0x02, 0x02, (width >> 8) & 0xff, width & 0xff))
+
+                d = np.max(img[i], axis=1)
+                zero_ids = np.where(d < hydra.core.EPS)
+                m, ie = np.frexp(d)
+                d = m * 256.0 / d
+                d[zero_ids] = 0.0
+
+                line[:, :3] = img[i] * np.tile(d[:, np.newaxis], [1, 3])
+                line[:, 3] = ie + 128
+                line = np.clip(line, 0.0, 255.0).astype(np.uint8)
 
                 buf = []
                 for ch in range(4):
@@ -154,7 +158,7 @@ class HDRFormat(object):
                         cursor_move = min(127, width - cursor)
                         buf.append(cursor_move)
                         for j in range(cursor, cursor + cursor_move):
-                            buf.append(line[j].get(ch))
+                            buf.append(line[j, ch])
                         cursor += cursor_move
 
                 f.write(struct.pack('B' * len(buf), *buf))
