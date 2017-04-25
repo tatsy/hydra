@@ -28,7 +28,7 @@ def kuo_expand_map(L, gamma_removal=-1.0):
     if gamma_removal > 0.0:
         sigma_r = sigma_r ** gamma_removal
 
-    expand_map = hydra.filter.bilateral(tmp_expand_map, sigma_s, sigma_r, J=L)
+    expand_map = hydra.filters.bilateral(tmp_expand_map, sigma_s, sigma_r, J=L)
 
     return np.reshape(expand_map, L.shape)
 

@@ -15,7 +15,7 @@ def bilateral_separation(img, sigma_s=0.02, sigma_r=0.4):
     sigma_s = max(r, c) * sigma_s
 
     img_log = np.log10(img + 1.0e-6)
-    img_fil = hydra.filter.bilateral(img_log, sigma_s, sigma_r)
+    img_fil = hydra.filters.bilateral(img_log, sigma_s, sigma_r)
 
     base = 10.0 ** (img_fil) - 1.0e-6
 
