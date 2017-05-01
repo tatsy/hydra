@@ -75,6 +75,7 @@ class HDRFormat(object):
             f.seek(byte_start)
 
             if filetype == HDR_RLE_RGBE_32:
+                # Run length encoded HDR
                 tmpdata = np.zeros((width * height * 4), dtype=np.uint8)
                 nowy = 0
                 while True:
@@ -84,7 +85,6 @@ class HDRFormat(object):
                         now = ord(f.read(1))
                         now2 = ord(f.read(1))
                     except:
-                        print('Hoge!!')
                         break
 
                     if now != 0x02 or now2 != 0x02:
@@ -120,6 +120,7 @@ class HDRFormat(object):
 
                 tmpdata = tmpdata.reshape((height, width, 4))
             else:
+                # Non-encoded HDR format
                 totsize = width * height * 4
                 tmpdata = struct.unpack('B' * totsize, f.read(totsize))
                 tmpdata = np.asarray(tmpdata, np.uint8).reshape((height, width, 4))
