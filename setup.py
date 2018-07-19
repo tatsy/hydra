@@ -23,9 +23,10 @@ setup(
     packages = [
         'hydra',
         'hydra.core',
+        'hydra.eo',
+        'hydra.filters',
         'hydra.gen',
         'hydra.io',
-        'hydra.filters',
         'hydra.tonemap'
     ]
 )
