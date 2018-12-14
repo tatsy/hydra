@@ -17,6 +17,7 @@ before_install:
 
 install:
   - conda create --name hydra --yes python=$TRAVIS_PYTHON_VERSION
+  - source activate hydra
   - conda install --yes setuptools numpy scipy pillow nose
   - conda install --yes -c dan_blanchard python-coveralls coverage=3.7.1
   - python setup.py install
