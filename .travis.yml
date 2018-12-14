@@ -2,11 +2,11 @@ language: python
 
 sudo: no
 
-python:
-  - "3.4"
-  - "3.5"
-  - "3.6"
-  - "3.7"
+env:
+  - TRAVIS_PYTHON_VERSION=3.4
+  - TRAVIS_PYTHON_VERSION=3.5
+  - TRAVIS_PYTHON_VERSION=3.6
+  - TRAVIS_PYTHON_VERSION=3.7
 
 before_install:
   - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
@@ -18,7 +18,7 @@ before_install:
 install:
   - conda create --name hydra --yes python=$TRAVIS_PYTHON_VERSION
   - source activate hydra
-  - conda install --yes setuptools numpy scipy pillow nose
+  - conda install --yes --file requirements.txt
   - conda install --yes -c conda-forge python-coveralls coverage
   - python setup.py install
 
