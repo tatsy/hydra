@@ -4,6 +4,9 @@ sudo: no
 
 python:
   - "3.4"
+  - "3.5"
+  - "3.6"
+  - "3.7"
 
 before_install:
   - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
@@ -13,7 +16,8 @@ before_install:
   - conda update --yes conda
 
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION setuptools numpy scipy pillow nose
+  - conda create --name hydra --yes python=$TRAVIS_PYTHON_VERSION
+  - conda install --yes setuptools numpy scipy pillow nose
   - conda install --yes -c dan_blanchard python-coveralls coverage=3.7.1
   - python setup.py install
 
