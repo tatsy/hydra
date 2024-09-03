@@ -2,19 +2,21 @@
 IO for .hdr format
 """
 
-import re
 import math
+import re
 import struct
-import numpy as np
 from itertools import product
 
 import hydra.core
+import numpy as np
 
 HDR_NONE = 0x00
 HDR_RLE_RGBE_32 = 0x01
 
+
 def strwrite(fp, str):
-    fp.write(bytearray(str, 'ascii'))
+    fp.write(bytearray(str, "ascii"))
+
 
 class HDRFormat(object):
     @staticmethod
@@ -23,7 +25,7 @@ class HDRFormat(object):
         Load .hdr format
         """
         img = None
-        with open(filename, 'rb') as f:
+        with open(filename, "rb") as f:
             bufsize = 4096
             filetype = HDR_NONE
             valid = False
@@ -31,40 +33,40 @@ class HDRFormat(object):
 
             # Read header section
             while True:
-                buf = f.readline(bufsize).decode('ascii')
-                if buf[0] == '#' and (buf == '#?RADIANCE\n' or buf == '#?RGBE\n'):
+                buf = f.readline(bufsize).decode("ascii")
+                if buf[0] == "#" and (buf == "#?RADIANCE\n" or buf == "#?RGBE\n"):
                     valid = True
                 else:
-                    p = re.compile('FORMAT=(.*)')
+                    p = re.compile("FORMAT=(.*)")
                     m = p.match(buf)
-                    if m is not None and m.group(1) == '32-bit_rle_rgbe':
+                    if m is not None and m.group(1) == "32-bit_rle_rgbe":
                         filetype = HDR_RLE_RGBE_32
                         continue
 
-                    p = re.compile('EXPOSURE=(.*)')
+                    p = re.compile("EXPOSURE=(.*)")
                     m = p.match(buf)
                     if m is not None:
                         exposure = float(m.group(1))
                         continue
 
-                if buf[0] == '\n':
+                if buf[0] == "\n":
                     # Header section ends
                     break
 
             if not valid:
-                raise Exception('HDR header is invalid!!')
+                raise Exception("HDR header is invalid!!")
 
             # Read body section
             width = 0
             height = 0
             buf = f.readline(bufsize).decode()
-            p = re.compile('([\-\+]Y) ([0-9]+) ([\-\+]X) ([0-9]+)')
+            p = re.compile(r"([\-\+]Y) ([0-9]+) ([\-\+]X) ([0-9]+)")
             m = p.match(buf)
-            if m is not None and m.group(1) == '-Y' and m.group(3) == '+X':
+            if m is not None and m.group(1) == "-Y" and m.group(3) == "+X":
                 width = int(m.group(4))
                 height = int(m.group(2))
             else:
-                raise Exception('HDR image size is invalid!!')
+                raise Exception("HDR image size is invalid!!")
 
             # Check byte array is truly RLE or not
             byte_start = f.tell()
@@ -122,11 +124,11 @@ class HDRFormat(object):
             else:
                 # Non-encoded HDR format
                 totsize = width * height * 4
-                tmpdata = struct.unpack('B' * totsize, f.read(totsize))
+                tmpdata = struct.unpack("B" * totsize, f.read(totsize))
                 tmpdata = np.asarray(tmpdata, np.uint8).reshape((height, width, 4))
 
-            expo = np.power(2.0, tmpdata[:,:,3] - 128.0) / 256.0
-            img = np.multiply(tmpdata[:,:,0:3], expo[:,:,np.newaxis])
+            expo = np.power(2.0, tmpdata[:, :, 3] - 128.0) / 256.0
+            img = np.multiply(tmpdata[:, :, 0:3], expo[:, :, np.newaxis])
 
         if img is None:
             raise Exception('Failed to load file "{0}"'.format(filename))
@@ -138,24 +140,26 @@ class HDRFormat(object):
         """
         Save .hdr format
         """
-        with open(filename, 'wb') as f:
+        with open(filename, "wb") as f:
             # Write header
-            ret = 0x0a
-            strwrite(f, '#?RADIANCE%c' % ret)
-            strwrite(f, '# Made with hydra, the python HDR library%c' % ret)
-            strwrite(f, 'FORMAT=32-bit_rle_rgbe%c' % ret)
-            strwrite(f, 'EXPOSURE=1.0000000000000%c%c' % (ret, ret))
+            ret = 0x0A
+            strwrite(f, "#?RADIANCE%c" % ret)
+            strwrite(f, "# Made with hydra, the python HDR library%c" % ret)
+            strwrite(f, "FORMAT=32-bit_rle_rgbe%c" % ret)
+            strwrite(f, "EXPOSURE=1.0000000000000%c%c" % (ret, ret))
 
             # Write size
             [height, width, dim] = img.shape
             if dim != 3:
-                raise Exception('HDR image must have 3 channels')
+                raise Exception("HDR image must have 3 channels")
 
-            strwrite(f, '-Y %d +X %d%c' % (height, width, ret))
+            strwrite(f, "-Y %d +X %d%c" % (height, width, ret))
 
             line = np.zeros((width, 4))
             for i in range(height):
-                f.write(struct.pack('BBBB', 0x02, 0x02, (width >> 8) & 0xff, width & 0xff))
+                f.write(
+                    struct.pack("BBBB", 0x02, 0x02, (width >> 8) & 0xFF, width & 0xFF)
+                )
 
                 d = np.max(img[i], axis=1)
                 zero_ids = np.where(d < hydra.core.EPS)
@@ -177,4 +181,4 @@ class HDRFormat(object):
                             buf.append(line[j, ch])
                         cursor += cursor_move
 
-                f.write(struct.pack('B' * len(buf), *buf))
+                f.write(struct.pack("B" * len(buf), *buf))
