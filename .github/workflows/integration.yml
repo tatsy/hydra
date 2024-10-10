@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Poetry
-        run: pipx install --upgrade poetry==$POETRY_VERSION
+        run: pipx install poetry==$POETRY_VERSION
 
       - name: Setup Python
         uses: actions/setup-python@v5
