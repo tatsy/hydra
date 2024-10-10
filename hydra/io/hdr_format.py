@@ -2,13 +2,14 @@
 IO for .hdr format
 """
 
-import math
 import re
+import math
 import struct
 from itertools import product
 
-import hydra.core
 import numpy as np
+
+import hydra.core
 
 HDR_NONE = 0x00
 HDR_RLE_RGBE_32 = 0x01

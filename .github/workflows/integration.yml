@@ -1,0 +1,31 @@
+name: Integration
+
+on:
+  - push
+  - pull_request
+
+env:
+  POETRY_VERSION: "1.8.0"
+
+jobs:
+  integration:
+    matrix:
+      OS: ["ubuntu-latest"]
+      PYTHON_VERSION: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    runs-on: ${{ matrix.OS }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Poetry
+        run: pipx install --upgrade poetry==$POETRY_VERSION
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.PYTHON_VERSION }}
+          cache: poetry
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run tests
+        run: poetry run pytest

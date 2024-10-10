@@ -1,14 +1,21 @@
 import math
+
 import numpy as np
+import numpy.typing as npt
+
 import hydra.core
 
-def calc_gamma(x):
+
+def calc_gamma(x: npt.NDArray) -> npt.NDArray:
     y = np.zeros(x.shape)
     y[x <= 100.0] = 1.855 + 0.4 * np.log10(x[x <= 100.0] + 2.3 * 1.0e-5)
     y[x > 100.0] = 2.655
     return y
 
-def tumblin(img, Lda=20.0, Ldmax=100.0, Cmax=100.0):
+
+def tumblin(
+    img: npt.NDArray, Lda: float = 20.0, Ldmax: float = 100.0, Cmax: float = 100.0
+) -> npt.NDArray:
     L = hydra.core.lum(img)
     tmp = np.log(L + 2.3 * 1.0e-5)
     Lwa = math.exp(np.average(tmp))
@@ -22,10 +29,7 @@ def tumblin(img, Lda=20.0, Ldmax=100.0, Cmax=100.0):
 
     ret = np.zeros(img.shape)
     for c in range(3):
-        ret[:,:,c] = hydra.core.remove_specials(img[:,:,c] / L * Ld)
+        ret[:, :, c] = hydra.core.remove_specials(img[:, :, c] / L * Ld)
 
-    ret = ret / Ldmax
-    ret = np.maximum(ret, 0.0)
-    ret = np.minimum(ret, 1.0)
-
-    return ret #/ Ldmax
+    ret = np.clip(ret / Ldmax, 0.0, 1.0)
+    return ret

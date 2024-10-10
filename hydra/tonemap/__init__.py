@@ -1,11 +1,10 @@
-from .normalize import *
-from .logarithmic import *
-from .exponential import *
-
+from .drago import *
 from .gamma import *
+from .durand import *
+from .fattal import *
 from .tumblin import *
 from .reinhard import *
-from .durand import *
-from .drago import *
-from .fattal import *
+from .normalize import *
 from .lischinski import *
+from .exponential import *
+from .logarithmic import *

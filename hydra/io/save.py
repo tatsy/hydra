@@ -2,15 +2,19 @@
 Save HDR image files.
 """
 
-import os
+from pathlib import Path
+
+import numpy.typing as npt
+
 from .hdr_format import HDRFormat as HDR
 from .pfm_format import PFMFormat as PFM
 
-def save(filename, img):
-    _, ext = os.path.splitext(filename)
-    if ext == '.hdr':
+
+def save(filename: str, img: npt.NDArray) -> None:
+    ext = Path(filename).suffix
+    if ext.lower() == ".hdr":
         HDR.save(filename, img)
-    elif ext == '.pfm':
+    elif ext.lower() == ".pfm":
         PFM.save(filename, img)
     else:
-        raise Exception('Unsupported HDR format')
+        raise Exception("Unsupported HDR format")

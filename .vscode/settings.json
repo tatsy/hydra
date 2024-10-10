@@ -1,0 +1,11 @@
+    // Python
+    "flake8.path": "pflake8",
+    "[python]": {
+      "editor.tabSize": 4,
+      "editor.formatOnSave": true,
+      "editor.formatOnType": false,
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": "always"
+      },
+      "editor.defaultFormatter": "ms-python.black-formatter"
+    },

@@ -1,12 +1,12 @@
-import math
-import hydra.core
-
 import numpy as np
 import scipy as sp
+import numpy.typing as npt
 import scipy.sparse
 import scipy.sparse.linalg
 
-from .reinhard import *
+import hydra.core
+from hydra.tonemap import calc_white_point
+
 
 def minimization(L, g, W, LM_alpha=1.0, LM_lambda=0.4):
     e = 1.0e-4
@@ -18,21 +18,20 @@ def minimization(L, g, W, LM_alpha=1.0, LM_lambda=0.4):
 
     dy = np.diff(L, n=1, axis=0)
     dy = -LM_lambda / (np.abs(dy) ** LM_alpha + e)
-    dy = np.pad(dy, ((0, 1), (0, 0)), 'constant')
+    dy = np.pad(dy, ((0, 1), (0, 0)), "constant")
     dy = dy.reshape(r * c)
 
     dx = np.diff(L, n=1, axis=1)
     dx = -LM_lambda / (np.abs(dx) ** LM_alpha + e)
-    dx = np.pad(dx, ((0, 0), (0, 1)), 'constant')
+    dx = np.pad(dx, ((0, 0), (0, 1)), "constant")
     dx = dx.reshape(r * c)
 
-    A = sp.sparse.spdiags(dx, -r, n, n) + \
-        sp.sparse.spdiags(dy, -1, n, n)
+    A = sp.sparse.spdiags(dx, -r, n, n) + sp.sparse.spdiags(dy, -1, n, n)
     A = A + A.T
 
-    g00 = np.pad(dx, (r, 0), 'constant')
+    g00 = np.pad(dx, (r, 0), "constant")
     g00 = g00[0:-r]
-    g01 = np.pad(dy, (1, 0), 'constant')
+    g01 = np.pad(dy, (1, 0), "constant")
     g01 = g01[0:-1]
 
     D = W.reshape(r * c) - (g00 + dx + g01 + dy)
@@ -41,7 +40,8 @@ def minimization(L, g, W, LM_alpha=1.0, LM_lambda=0.4):
     res = sp.sparse.linalg.spsolve(A, b)
     return res.reshape((r, c))
 
-def lischinski(img, alph=0.18):
+
+def lischinski(img: npt.NDArray, alph: float = 0.18) -> npt.NDArray:
     L = hydra.core.lum(img)
     Lwhite = calc_white_point(L)
     Lwhite2 = Lwhite * Lwhite
@@ -49,8 +49,8 @@ def lischinski(img, alph=0.18):
     maxL = np.max(L)
     minL = np.min(L)
     eps = 1.0e-6
-    minLLog = math.log2(minL + eps)
-    Z = math.ceil(math.log2(maxL) - minLLog)
+    minLLog = np.log2(minL + eps)
+    Z = np.ceil(np.log2(maxL) - minLLog)
 
     fstopMap = np.zeros(L.shape)
     Lav = hydra.core.log_mean(L)
@@ -62,14 +62,13 @@ def lischinski(img, alph=0.18):
             Rz2 = alph * Rz / Lav
             f = (Rz2 * (1.0 + Rz2 / Lwhite2)) / (1.0 + Rz2)
 
-            fstopMap[indx] = math.log(f / Rz)
-
+            fstopMap[indx] = np.log(f / Rz)
 
     fstopMap = 2.0 ** minimization(np.log2(L + eps), fstopMap, 0.07 * np.ones(L.shape))
 
     ret = np.zeros(img.shape)
     for c in range(3):
-        ret[:,:,c] = img[:,:,c] * fstopMap
+        ret[:, :, c] = img[:, :, c] * fstopMap
 
     ret = np.maximum(ret, 0.0)
     ret = np.minimum(ret, 1.0)

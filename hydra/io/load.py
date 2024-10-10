@@ -2,15 +2,19 @@
 Load HDR image files.
 """
 
-import os
+from pathlib import Path
+
+import numpy.typing as npt
+
 from .hdr_format import HDRFormat as HDR
 from .pfm_format import PFMFormat as PFM
 
-def load(filename):
-    _, ext = os.path.splitext(filename)
-    if ext == '.hdr':
+
+def load(filename: str) -> npt.NDArray:
+    ext = Path(filename).suffix
+    if ext.lower() == ".hdr":
         return HDR.load(filename)
-    elif ext == '.pfm':
+    elif ext.lower() == ".pfm":
         return PFM.load(filename)
     else:
-        raise Exception('Unsupported HDR format')
+        raise Exception("Unsupported HDR format")

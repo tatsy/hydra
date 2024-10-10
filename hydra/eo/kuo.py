@@ -1,15 +1,16 @@
-'''
+"""
 Implementation of the paper,
 Kuo et al. 2012, "Content-Adaptive Inverse Tone Mapping"
-'''
+"""
 
 import math
+
 import numpy as np
 import scipy as sp
-import scipy.ndimage
 
 import hydra.core
 import hydra.filters
+
 
 def kuo_expand_map(L, gamma_removal=-1.0):
     kernel_size = math.ceil(0.1 * max(L.shape))
@@ -26,11 +27,12 @@ def kuo_expand_map(L, gamma_removal=-1.0):
     sigma_s = kernel_size / 5.0
     sigma_r = 100.0 / 255.0
     if gamma_removal > 0.0:
-        sigma_r = sigma_r ** gamma_removal
+        sigma_r = sigma_r**gamma_removal
 
     expand_map = hydra.filters.bilateral(tmp_expand_map, sigma_s, sigma_r, J=L)
 
     return np.reshape(expand_map, L.shape)
+
 
 def kuo(img, Lmax, gamma_removal=-1.0):
     if gamma_removal > 0.0:
@@ -49,6 +51,6 @@ def kuo(img, Lmax, gamma_removal=-1.0):
 
     ret = np.zeros(img.shape)
     for c in range(3):
-        ret[:,:,c] = hydra.core.remove_specials(img[:,:,c] * Lexp / Ld)
+        ret[:, :, c] = hydra.core.remove_specials(img[:, :, c] * Lexp / Ld)
 
     return ret

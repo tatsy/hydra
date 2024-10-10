@@ -1,10 +1,10 @@
-import math
-from itertools import product
-
 import numpy as np
+import numpy.typing as npt
+
 import hydra.core
 
-def calc_white_point(L):
+
+def calc_white_point(L: npt.NDArray) -> float:
     Lmax = hydra.core.max_quart(L, 0.99)
     Lmin = hydra.core.max_quart(L, 0.01)
 
@@ -13,7 +13,8 @@ def calc_white_point(L):
 
     return 1.5 * (2 ** (log2Max - log2Min - 5.0))
 
-def reinhard(img, alph=0.18):
+
+def reinhard(img: npt.NDArray, alph: float = 0.18) -> npt.NDArray:
     L = hydra.core.lum(img)
     Lwa = hydra.core.log_mean(L)
 
@@ -22,11 +23,11 @@ def reinhard(img, alph=0.18):
     Lwhite = calc_white_point(L)
     Lwhite2 = Lwhite * Lwhite
 
-    Ld = (Lscaled * (1.0 + Lscaled / Lwhite2) / (1.0 + Lscaled))
+    Ld = Lscaled * (1.0 + Lscaled / Lwhite2) / (1.0 + Lscaled)
 
     ret = np.zeros(img.shape)
     for c in range(3):
-        ret[:,:,c] = hydra.core.remove_specials(img[:,:,c] / L * Ld)
+        ret[:, :, c] = hydra.core.remove_specials(img[:, :, c] / L * Ld)
 
     ret = np.maximum(ret, 0.0)
     ret = np.minimum(ret, 1.0)

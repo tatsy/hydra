@@ -2,78 +2,42 @@
 Testing hydra.core module.
 """
 
-try:
-    import unittest2 as unittest
-except:
-    import unittest
+import pytest
 
 import hydra.core
-from .test_helper import *
-from random import *
 
-class TestCore(unittest.TestCase):
-    def test_clamp(self):
-        for t in range(REPEAT):
-            r = random()
-            a = hydra.core.clamp(r)
-            self.assertLessEqual(0.0, r)
-            self.assertLessEqual(r, 1.0)
-            if 0.0 <= r and r <= 1.0:
-                self.assertEqual(r, a)
 
-    def test_clamp_range(self):
-        for t in range(REPEAT):
-            r = random()
-            l = random()
-            h = random()
-            if l > h:
-                l, h = h, l
+def test_pixel():
+    p = hydra.core.Pixel(0.0, 0.0, 0.0)
+    assert p.r == 0
+    assert p.g == 0
+    assert p.b == 0
+    assert p.e == 0
 
-            a = hydra.core.clamp(r, range=(l, h))
-            self.assertLessEqual(l, a)
-            self.assertLessEqual(a, h)
-            if l <= r and r <= h:
-                self.assertEqual(r, a)
+    p = hydra.core.Pixel(1.0, 1.0, 1.0)
+    assert p.r == 128
+    assert p.g == 128
+    assert p.b == 128
+    assert p.e == 129
 
-    def test_clamp_raises(self):
-        for t in range(REPEAT):
-            r = random()
-            l = random()
-            h = random()
-            if l <= h:
-                l, h = h, l
 
-            with self.assertRaises(Exception):
-                hydra.core.clamp(r, range=(l, h))
+def test_pixel_get():
+    p = hydra.core.Pixel(0.0, 0.0, 0.0)
+    assert p.get(0) == 0
+    assert p.get(1) == 0
+    assert p.get(2) == 0
+    assert p.get(3) == 0
 
-    def test_pixel(self):
-        p = hydra.core.Pixel(0.0, 0.0, 0.0)
-        self.assertEqual(p.r, 0)
-        self.assertEqual(p.g, 0)
-        self.assertEqual(p.b, 0)
-        self.assertEqual(p.e, 0)
+    with pytest.raises(IndexError):
+        p.get(4)
 
-        p = hydra.core.Pixel(1.0, 1.0, 1.0)
-        self.assertEqual(p.r, 128)
-        self.assertEqual(p.g, 128)
-        self.assertEqual(p.b, 128)
-        self.assertEqual(p.e, 129)
 
-    def test_pixel_get(self):
-        p = hydra.core.Pixel(0.0, 0.0, 0.0)
-        self.assertEqual(p.get(0), 0)
-        self.assertEqual(p.get(1), 0)
-        self.assertEqual(p.get(2), 0)
-        self.assertEqual(p.get(3), 0)
-        with self.assertRaises(Exception):
-            p[4]
+def test_pixel_getitem():
+    p = hydra.core.Pixel(0.0, 0.0, 0.0)
+    assert p[0] == 0
+    assert p[1] == 0
+    assert p[2] == 0
+    assert p[3] == 0
 
-        self.assertEqual(p[0], 0)
-        self.assertEqual(p[1], 0)
-        self.assertEqual(p[2], 0)
-        self.assertEqual(p[3], 0)
-        with self.assertRaises(Exception):
-            p[4]
-
-if __name__ == '__main__':
-    unittest.main()
+    with pytest.raises(IndexError):
+        p[4]

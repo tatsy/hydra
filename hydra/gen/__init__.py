@@ -1,1 +1,1 @@
-from .devebec import devebec
+from .devebec import *

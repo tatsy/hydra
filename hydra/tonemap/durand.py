@@ -6,8 +6,11 @@ Durand and Dorsey SIGGGRAPH 2002,
 """
 
 import numpy as np
+
 import hydra.io
+import hydra.core
 import hydra.filters
+
 
 def bilateral_separation(img, sigma_s=0.02, sigma_r=0.4):
     r, c = img.shape
@@ -26,11 +29,12 @@ def bilateral_separation(img, sigma_s=0.02, sigma_r=0.4):
 
     return base, detail
 
+
 def durand(img, target_contrast=5.0):
     L = hydra.core.lum(img)
     tmp = np.zeros(img.shape)
     for c in range(3):
-        tmp[:,:,c] = hydra.core.remove_specials(img[:,:,c] / L)
+        tmp[:, :, c] = hydra.core.remove_specials(img[:, :, c] / L)
 
     Lbase, Ldetail = bilateral_separation(L)
 
@@ -47,9 +51,8 @@ def durand(img, target_contrast=5.0):
 
     ret = np.zeros(img.shape)
     for c in range(3):
-        ret[:,:,c] = tmp[:,:,c] * output
+        ret[:, :, c] = tmp[:, :, c] * output
 
-    ret = np.maximum(ret, 0.0)
-    ret = np.minimum(ret, 1.0)
+    ret = np.clip(ret, 0.0, 1.0)
 
     return ret
