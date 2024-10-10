@@ -9,9 +9,10 @@ env:
 
 jobs:
   integration:
-    matrix:
-      OS: ["ubuntu-latest"]
-      PYTHON_VERSION: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    strategy:
+      matrix:
+        OS: ["ubuntu-latest"]
+        PYTHON_VERSION: ["3.7", "3.8", "3.9", "3.10", "3.11"]
     runs-on: ${{ matrix.OS }}
     steps:
       - uses: actions/checkout@v4
