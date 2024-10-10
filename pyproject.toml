@@ -5,7 +5,9 @@ description = "Hydra is a Python HDR image processing library."
 authors = ["Tatsuya Yatagawa <tatsy.mail@gmail.com>"]
 readme = "README.md"
 license = "MIT"
-include = ["hydra"]
+packages = [
+    { include="hydra" }
+]
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Development Status :: 1 - Planning",
