@@ -1,8 +1,14 @@
 name: Integration
 
 on:
-  - push
   - pull_request
+  - push:
+    branches:
+      - master
+      - dev
+      - releases
+    tags:
+      - 'v*'
 
 env:
   POETRY_VERSION: "1.8.0"
