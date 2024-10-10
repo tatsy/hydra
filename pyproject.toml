@@ -3,7 +3,7 @@ name = "hydra"
 version = "0.1.0"
 description = "Hydra is a Python HDR image processing library."
 authors = ["Tatsuya Yatagawa <tatsy.mail@gmail.com>"]
-readme = "README.md"
+readme = "README.rst"
 license = "MIT"
 packages = [
     { include="hydra" }
@@ -37,3 +37,25 @@ pytest = "*"
 [build-system]
 requires = ["setuptools", "poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.isort]
+profile = "black"
+length_sort = true
+line_length = 99
+
+[tool.mypy]
+python_version = "3.10"
+follow_imports = "silent"
+disallow_any_generics = true
+strict_optional = true
+check_untyped_defs = true
+allow_redefinition = true
+
+[tool.flake8]
+max-line-length = 99
+ignore = "Q000,E127,E203,E402,W503,W504"
+
+[tool.black]
+target-version = ["py310"]
+line-length = 99
