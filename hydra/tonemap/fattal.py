@@ -137,12 +137,10 @@ def poisson_solver(f):
     T = np.ones(n)
     O = T.copy()
     T[range(0, n, r)] = 0.0
-
     B = sp.sparse.spdiags(-T, 1, n, n) + sp.sparse.spdiags(-O, r, n, n)
 
     A = A + B + B.T
-
-    x = sp.sparse.linalg.spsolve(A, b)
+    x = sp.sparse.linalg.bicgstab(A, b)[0]
     x = x.reshape((c, r)).T
 
     return x
@@ -169,8 +167,7 @@ def fattal(img, beta=0.90, normalize=True):
     Ld = np.exp(poisson_solver(divG))
     if normalize:
         Ld = Ld / hydra.core.max_quart(Ld, 0.99995)
-        Ld = np.maximum(Ld, 0.0)
-        Ld = np.minimum(Ld, 1.0)
+        Ld = np.clip(Ld, 0.0, 1.0)
 
     ret = np.zeros(img.shape)
     for c in range(3):

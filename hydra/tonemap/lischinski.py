@@ -37,7 +37,7 @@ def minimization(L, g, W, LM_alpha=1.0, LM_lambda=0.4):
     D = W.reshape(r * c) - (g00 + dx + g01 + dy)
     A = A + sp.sparse.spdiags(D, 0, n, n)
 
-    res = sp.sparse.linalg.spsolve(A, b)
+    res = sp.sparse.linalg.bicgstab(A, b)[0]
     return res.reshape((r, c))
 
 
@@ -50,7 +50,7 @@ def lischinski(img: npt.NDArray, alph: float = 0.18) -> npt.NDArray:
     minL = np.min(L)
     eps = 1.0e-6
     minLLog = np.log2(minL + eps)
-    Z = np.ceil(np.log2(maxL) - minLLog)
+    Z = int(np.ceil(np.log2(maxL) - minLLog))
 
     fstopMap = np.zeros(L.shape)
     Lav = hydra.core.log_mean(L)

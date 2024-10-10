@@ -33,6 +33,7 @@ black = "*"
 mypy = "*"
 isort = "*"
 pytest = "*"
+matplotlib = "*"
 
 [build-system]
 requires = ["setuptools", "poetry-core"]
