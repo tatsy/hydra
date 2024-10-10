@@ -2,7 +2,7 @@
 Example 1. Get started
 """
 
-import sys
+import os
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 import hydra.io
 import hydra.tonemap
 
-filename = "../data/memorial.hdr"
+ROOT_DIR = os.path.join(os.path.dirname(__file__), os.path.pardir)
+IMAGE_PATH = os.path.join(ROOT_DIR, "data", "memorial.hdr")
 
 
 def on_key_press(event):
@@ -19,7 +20,7 @@ def on_key_press(event):
 
 def main():
     # Load HDR
-    img = hydra.io.load(filename)
+    img = hydra.io.load(IMAGE_PATH)
 
     # Tumblin and Rushmeier 1993
     tm = hydra.tonemap.tumblin(img)

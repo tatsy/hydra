@@ -36,8 +36,9 @@ def minimization(L, g, W, LM_alpha=1.0, LM_lambda=0.4):
 
     D = W.reshape(r * c) - (g00 + dx + g01 + dy)
     A = A + sp.sparse.spdiags(D, 0, n, n)
+    A = A.tocsr()
 
-    res = sp.sparse.linalg.bicgstab(A, b)[0]
+    res = sp.sparse.linalg.spsolve(A, b)
     return res.reshape((r, c))
 
 

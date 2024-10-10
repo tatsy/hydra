@@ -139,8 +139,8 @@ def poisson_solver(f):
     T[range(0, n, r)] = 0.0
     B = sp.sparse.spdiags(-T, 1, n, n) + sp.sparse.spdiags(-O, r, n, n)
 
-    A = A + B + B.T
-    x = sp.sparse.linalg.bicgstab(A, b)[0]
+    A = (A + B + B.T).tocsr()
+    x = sp.sparse.linalg.spsolve(A, b)
     x = x.reshape((c, r)).T
 
     return x
